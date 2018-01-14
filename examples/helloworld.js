@@ -63,6 +63,17 @@ bot.onCommand("hello", function (command) {
 });
 
 
+// Bam stuff
+bot.onCommand("bam", function (command) {
+    spark.createMessage(command.message.roomId, "BAM!!! We can be BAM Buddies!! :D", { "markdown":true }, function(err, response) {
+        if (err) {
+            console.log("WARNING: could not post Fallback message to room: " + command.message.roomId);
+            return;
+        }
+    });
+});
+
+
 //
 // Welcome message 
 // sent as the bot is added to a Room
