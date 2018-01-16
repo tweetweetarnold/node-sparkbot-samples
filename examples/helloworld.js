@@ -15,7 +15,8 @@
 
 var SparkBot = require("node-sparkbot");
 var bot = new SparkBot();
-//bot.interpreter.prefix = "#"; // Remove comment to overlad default / prefix to identify bot commands
+var webhookUrl = "https://e055b87d.ngrok.io";
+bot.interpreter.prefix = ""; // Remove comment to overlad default / prefix to identify bot commands
 
 var SparkAPIWrapper = require("node-sparkclient");
 if (!process.env.SPARK_TOKEN) {
@@ -27,12 +28,19 @@ if (!process.env.SPARK_TOKEN) {
 }
 var spark = new SparkAPIWrapper(process.env.SPARK_TOKEN);
 
+//
+// Autocreate / update webhook
+//
+bot.createOrUpdateWebhook("register-bot", webhookUrl, "all", "all", null, bot.secret, function (err, webhook) {
+  console.log("webhook successfully created, id: " + webhook.id);
+});
+
 
 //
 // Help and fallback commands
 //
 bot.onCommand("help", function (command) {
-    spark.createMessage(command.message.roomId, "Hi, I am the Hello World bot !\n\nType /hello to see me in action.", { "markdown":true }, function(err, message) {
+    spark.createMessage(command.message.roomId, "Hi, I am the Hello World bot !\n\n Type *hello* to see me in action. \n - bam", { "markdown":true }, function(err, message) {
         if (err) {
             console.log("WARNING: could not post message to room: " + command.message.roomId);
             return;
@@ -63,6 +71,8 @@ bot.onCommand("hello", function (command) {
 });
 
 
+// **************** TEST *********************
+
 // Bam stuff
 bot.onCommand("bam", function (command) {
     spark.createMessage(command.message.roomId, "BAM!!! We can be BAM Buddies!! :D", { "markdown":true }, function(err, response) {
@@ -71,7 +81,37 @@ bot.onCommand("bam", function (command) {
             return;
         }
     });
+    
 });
+
+bot.onCommand("shit", function (command) {
+    console.log(command.message);
+    spark.createMessage(command.message.roomId, "You are shit <@personEmail:" + command.message.personEmail + ">", { "markdown":true }, function(err, response) {
+        if (err) {
+            console.log("WARNING: could not post Fallback message to room: " + command.message.roomId);
+            return;
+        }
+    });
+    
+});
+
+
+//on message
+// bot.onMessage(function(trigger, message) {
+ 
+//     // ADD YOUR CUSTOM CODE HERE
+//     console.log("new message from: " + trigger.data.personEmail + ", text: " + message.text);
+    
+//     spark.createMessage(trigger.data.roomId, "Same", {"markdown":true}, function(err, response){
+//         if (err) {
+//             console.log("WARNING: could not post Same message to room: " + command.message.roomId);
+//             return;
+//         }
+//     })
+//   });
+
+
+// **************** END TEST *********************
 
 
 //
